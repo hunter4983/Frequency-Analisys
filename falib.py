@@ -1,10 +1,10 @@
-from collections import Counter
+import file_paths as fp
 import string
-from collections import Counter
-from nltk.corpus import stopwords
 import aiofiles
 import os
-import file_paths as fp
+import analysis_methods as am
+from collections import Counter
+from nltk.corpus import stopwords
 
 
 async def read_file(path):
@@ -118,7 +118,7 @@ def text_append(filenames, results_lines, r, average, sorted_freqs):
     # Добавляем вложенный массив в result_lines
     results_lines.append(text_data)
 
-async def switch(filenames, results_lines):
+async def switch(filenames, results_lines,freqs_list):
     while True:
         # Выбор пользователя на вывод данных
         choice = input("Вывести все результаты в файл (Y)?\n"+
@@ -148,22 +148,26 @@ async def switch(filenames, results_lines):
             for filename in filenames:
                 print(f"{number}: {filename}")
                 number = number + 1
-
-                await print_selected_text(results_lines)
+                
+                await print_selected_text(results_lines,choice)
             break
 
 
         #Загрузка корреляции
         elif choice.lower().startswith("x"):
-            print("Корреляции сохранены.")
-            break
+         am.pearson(freqs_list, filenames)
+         am.spearman(freqs_list, filenames)
+         am.odds_ratios(freqs_list, filenames)
+         print("Корреляции сохранены.")
+         break
 
         else:
             print("Некорректный выбор. Введите 'Y'/'N'/'T'/'X'.")
 
-async def print_selected_text(results_lines):
+async def print_selected_text(results_lines,choice_txt):
     while True:
         # Запрашиваем у пользователя номер текста для вывода
+        choice_txt = input(f"Введите номер текста для вывода (от 1 до {format(len(results_lines))}):")
         if not choice_txt.isdigit():
             print(f"Некорректный номер текста. Введите номер от 1 до {len(results_lines)}):")
         else:

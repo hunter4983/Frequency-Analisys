@@ -16,11 +16,9 @@ async def main():
     
     #results_lines.append ("\tЗадание по сдаче курса «Информационные технологии», “Информационные системы”. Анализ данных:\n")
     fl.start_freq_analyze(filenames, text, freqs_list, results_lines)
-    await fl.switch(filenames, results_lines)
+    await fl.switch(filenames, results_lines,freqs_list)
 
-    am.pearson(freqs_list, filenames)
-    am.spearman(freqs_list, filenames)
-    am.odds_ratios(freqs_list, filenames)
+
 
 asyncio.run(main())
 print("Done...")
